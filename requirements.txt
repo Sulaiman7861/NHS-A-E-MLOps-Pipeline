@@ -1,0 +1,40 @@
+# Data fetching
+requests
+beautifulsoup4
+httpx
+
+# Data processing
+pandas
+numpy
+pyarrow
+xlrd
+openpyxl
+
+# Config
+pyyaml
+
+# Validation
+pandera
+
+# ML
+scikit-learn
+xgboost
+lightgbm
+optuna
+shap
+
+# Experiment tracking
+mlflow
+
+# Drift detection
+evidently
+
+# Serving
+fastapi
+uvicorn
+
+# Dashboard
+streamlit
+
+# Testing
+pytest

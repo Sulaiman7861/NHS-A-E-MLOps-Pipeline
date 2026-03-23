@@ -1,0 +1,49 @@
+# Paths
+raw_data_dir: data/raw
+processed_data_dir: data/processed
+
+# NHS England A&E year-specific landing pages
+# Listed newest first. URLs are hardcoded because the slug pattern
+# is not consistent across all years (2015-16 and 2016-17 differ).
+year_pages:
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/ae-attendances-and-emergency-admissions-2024-25/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/ae-attendances-and-emergency-admissions-2023-24/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/ae-attendances-and-emergency-admissions-2022-23/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/ae-attendances-and-emergency-admissions-2021-22/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/ae-attendances-and-emergency-admissions-2020-21/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/ae-attendances-and-emergency-admissions-2019-20/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/ae-attendances-and-emergency-admissions-2018-19/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/ae-attendances-and-emergency-admissions-2017-18/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/statistical-work-areasae-waiting-times-and-activityae-attendances-and-emergency-admissions-2016-17/
+  - https://www.england.nhs.uk/statistics/statistical-work-areas/ae-waiting-times-and-activity/statistical-work-areasae-waiting-times-and-activityae-attendances-and-emergency-admissions-2015-16-monthly-3/
+
+# File format preference per year
+# From 2019-20 onwards both CSV and XLS exist — prefer CSV
+# Before 2019-20 only XLS exists
+preferred_format: csv
+fallback_format: xls
+
+# Keywords to identify monthly provider-level files
+# Filters out quarterly, annual, ECDS, and PDF links
+file_keywords:
+  - Monthly
+  - monthly
+  - by-provider
+  - AE-by-provider
+
+# Keywords to exclude (quarterly summaries, PDFs, supplementary files)
+exclude_keywords:
+  - Quarter
+  - quarter
+  - Annual
+  - annual
+  - ECDS
+  - ecds
+  - commentary
+  - Commentary
+  - Supplementary
+  - supplementary
+
+# Request settings
+request_timeout_seconds: 30
+request_delay_seconds: 1
