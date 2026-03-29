@@ -1,47 +1,54 @@
-import yaml 
-import requests 
-import time 
-import os 
-from pathlib import Path
-from bs4 import BeautifulSoup
+import yaml
+import requests
 import os
+from bs4 import BeautifulSoup
+from pathlib import Path
+
 
 def load_config(config_path):
     with open(config_path) as f:
         return yaml.safe_load(f)
+
+
+def get_filtered_links(soup, config):
+    all_links = [tag.get("href") for tag in soup.find_all("a") if tag.get("href")]
+    data_links = [l for l in all_links if l.endswith((".csv", ".xls"))]
+    keyword_links = [l for l in data_links if any(k in l for k in config['file_keywords'])]
+    filtered_links = [l for l in keyword_links if not any(k in l for k in config['exclude_keywords'])]
+    return filtered_links
+
+
+def download_files(links, save_dir):
+    Path(save_dir).mkdir(parents=True, exist_ok=True)
     
+    for link in links:
+        filename = os.path.basename(link)
+        save_path = Path(save_dir) / filename
+
+        if save_path.exists():
+            print(f"Skipping {filename} — already downloaded")
+            continue
+
+        print(f"Downloading {filename}...")
+        response = requests.get(link, timeout=30)
+        response.raise_for_status()
+
+        with open(save_path, "wb") as f:
+            f.write(response.content)
+        print(f"Saved to {save_path}")
+
+
 if __name__ == "__main__":
     config = load_config('configs/ingestion.yaml')
     url = config['year_pages'][0]
+
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
 
-    all_links = []
-    for tag in soup.find_all("a"):
-        href = tag.get("href")
-        if href:
-            all_links.append(href)
-    
-    data_links = [] 
-    for link in all_links:
-        if link.endswith(".csv") or link.endswith(".xls"):
-            data_links.append(link)
-    
-    print(data_links)
+    filtered_links = get_filtered_links(soup, config)
+    max_files = config.get("max_files")
+    if max_files:
+        filtered_links = filtered_links[:max_files]
 
-    keyword_links = []
-    for link in data_links:
-        if any(keyword in link for keyword in config['file_keywords']):
-            keyword_links.append(link)
-
-    filtered_links = []
-    for link in keyword_links:
-        if not any(keyword in link for keyword in config['exclude_keywords']):
-            filtered_links.append(link)
-
-    print(filtered_links)
-
-filename = os.path.basename("https://www.england.nhs.uk/statistics/wp-content/uploads/sites/2/2025/04/March-2025-AE-by-provider-cAki3.xls")
-print(filename)
-parts = filename.split('-')
-print(parts)
+    print(f"Found {len(filtered_links)} files to download")
+    download_files(filtered_links, save_dir=config['raw_data_dir'])
